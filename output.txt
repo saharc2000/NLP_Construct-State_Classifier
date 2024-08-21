@@ -1,282 +1,107 @@
 [
     {
-        "word": "כמו",
-        "lex": "כמו",
+        "word": "בואו",
+        "lex": "[BLANK]",
+        "pos": "VERB",
+        "Gender": null,
+        "dep_func": "root"
+    },
+    {
+        "word": "לדבר",
+        "lex": "דיבר",
+        "pos": "VERB",
+        "Gender": null,
+        "dep_func": "xcomp"
+    },
+    {
+        "word": "על",
+        "lex": "על",
         "pos": "ADP",
         "Gender": null,
         "dep_func": "case"
     },
     {
-        "word": "כן",
-        "lex": "כן",
+        "word": "כך",
+        "lex": "כך",
         "pos": "PRON",
         "Gender": null,
         "dep_func": "obl"
     },
     {
-        "word": ",",
-        "lex": ",",
-        "pos": "PUNCT",
-        "Gender": null,
-        "dep_func": "punct"
-    },
-    {
-        "word": "עלייך",
-        "lex": "על",
-        "pos": "ADP",
-        "Gender": null,
-        "dep_func": "root"
-    },
-    {
-        "word": "להקפיד",
-        "lex": "הקפיד",
-        "pos": "VERB",
-        "Gender": null,
-        "dep_func": "csubj"
-    },
-    {
-        "word": "על",
-        "lex": "על",
-        "pos": "ADP",
-        "Gender": null,
-        "dep_func": "case"
-    },
-    {
-        "word": "ביצוע",
-        "lex": "ביצוע",
+        "word": "בפורום",
+        "lex": "פורום",
         "pos": "NOUN",
         "Gender": "Masc",
         "dep_func": "obl"
     },
     {
-        "word": "בדיקות",
-        "lex": "בדיקה",
+        "word": "גיל",
+        "lex": "גיל",
         "pos": "NOUN",
-        "Gender": "Fem",
+        "Gender": "Masc",
         "dep_func": "compound:smixut"
     },
     {
-        "word": "תקופתיות",
-        "lex": "תקופתי",
-        "pos": "ADJ",
-        "Gender": "Fem",
-        "dep_func": "amod"
+        "word": "המעבר",
+        "lex": "מעבר",
+        "pos": "NOUN",
+        "Gender": "Masc",
+        "dep_func": "compound:smixut"
     },
     {
-        "word": ",",
-        "lex": ",",
-        "pos": "PUNCT",
-        "Gender": null,
-        "dep_func": "punct"
-    },
-    {
-        "word": "הכוללות",
-        "lex": "כולל",
+        "word": "פורסם",
+        "lex": "פורסם",
         "pos": "VERB",
-        "Gender": "Fem",
-        "dep_func": "acl:relcl"
+        "Gender": "Masc",
+        "dep_func": "parataxis"
     },
     {
-        "word": ":",
-        "lex": ":",
-        "pos": "PUNCT",
-        "Gender": null,
-        "dep_func": "punct"
-    },
-    {
-        "word": "ממוגרפיה",
-        "lex": "ממוגרפיה",
-        "pos": "NOUN",
-        "Gender": "Fem",
-        "dep_func": "appos"
-    },
-    {
-        "word": "שגרתית",
-        "lex": "שגרתי",
-        "pos": "ADJ",
-        "Gender": "Fem",
-        "dep_func": "amod"
-    },
-    {
-        "word": ",",
-        "lex": ",",
-        "pos": "PUNCT",
-        "Gender": null,
-        "dep_func": "punct"
-    },
-    {
-        "word": "בדיקה",
-        "lex": "בדיקה",
-        "pos": "NOUN",
-        "Gender": "Fem",
-        "dep_func": "conj"
-    },
-    {
-        "word": "גניקולוגית",
-        "lex": "הורמונלי",
-        "pos": "ADJ",
-        "Gender": "Fem",
-        "dep_func": "amod"
-    },
-    {
-        "word": ",",
-        "lex": ",",
-        "pos": "PUNCT",
-        "Gender": null,
-        "dep_func": "punct"
-    },
-    {
-        "word": "בדיקה",
-        "lex": "בדיקה",
-        "pos": "NOUN",
-        "Gender": "Fem",
-        "dep_func": "conj"
-    },
-    {
-        "word": "על",
-        "lex": "על",
+        "word": "לראשונה",
+        "lex": "ראשון",
         "pos": "ADV",
         "Gender": null,
-        "dep_func": "compound:affix"
+        "dep_func": "advmod"
     },
     {
-        "word": "-",
-        "lex": "-",
-        "pos": "PUNCT",
-        "Gender": null,
-        "dep_func": "punct"
-    },
-    {
-        "word": "קולית",
-        "lex": "קולי",
-        "pos": "ADJ",
-        "Gender": "Fem",
-        "dep_func": "amod"
-    },
-    {
-        "word": "(",
-        "lex": "(",
-        "pos": "PUNCT",
-        "Gender": null,
-        "dep_func": "punct"
-    },
-    {
-        "word": "אולטראסאונד",
-        "lex": "אולטראסאונד",
+        "word": "בתאריך",
+        "lex": "תאריך",
         "pos": "NOUN",
         "Gender": "Masc",
-        "dep_func": "appos"
+        "dep_func": "obl"
     },
     {
-        "word": ")",
-        "lex": ")",
-        "pos": "PUNCT",
+        "word": "15",
+        "lex": "15",
+        "pos": "NUM",
         "Gender": null,
-        "dep_func": "punct"
-    },
-    {
-        "word": "של",
-        "lex": "של",
-        "pos": "ADP",
-        "Gender": null,
-        "dep_func": "case:gen"
-    },
-    {
-        "word": "האגן",
-        "lex": "אגן",
-        "pos": "NOUN",
-        "Gender": "Masc",
-        "dep_func": "nmod:poss"
-    },
-    {
-        "word": ",",
-        "lex": ",",
-        "pos": "PUNCT",
-        "Gender": null,
-        "dep_func": "punct"
-    },
-    {
-        "word": "משטח",
-        "lex": "משטח",
-        "pos": "NOUN",
-        "Gender": "Masc",
-        "dep_func": "conj"
-    },
-    {
-        "word": "צוואר",
-        "lex": "צוואר",
-        "pos": "NOUN",
-        "Gender": "Masc",
         "dep_func": "compound:smixut"
     },
     {
         "word": "-",
         "lex": "-",
-        "pos": "PUNCT",
+        "pos": "SYM",
         "Gender": null,
-        "dep_func": "punct"
-    },
-    {
-        "word": "הרחם",
-        "lex": "רחם",
-        "pos": "NOUN",
-        "Gender": "Masc",
-        "dep_func": "compound:smixut"
-    },
-    {
-        "word": ",",
-        "lex": ",",
-        "pos": "PUNCT",
-        "Gender": null,
-        "dep_func": "punct"
-    },
-    {
-        "word": "צפיפות",
-        "lex": "צפיפות",
-        "pos": "NOUN",
-        "Gender": "Fem",
-        "dep_func": "conj"
-    },
-    {
-        "word": "עצם",
-        "lex": "עצם",
-        "pos": "NOUN",
-        "Gender": "Fem",
-        "dep_func": "compound:smixut"
-    },
-    {
-        "word": "ובדיקות",
-        "lex": "בדיקה",
-        "pos": "NOUN",
-        "Gender": "Fem",
-        "dep_func": "conj"
-    },
-    {
-        "word": "נוספות",
-        "lex": "נוסף",
-        "pos": "ADJ",
-        "Gender": "Fem",
-        "dep_func": "amod"
-    },
-    {
-        "word": "בהתאם",
-        "lex": "התאים",
-        "pos": "NOUN",
-        "Gender": "Masc",
         "dep_func": "case"
     },
     {
-        "word": "לצורך",
-        "lex": "צורך",
-        "pos": "NOUN",
-        "Gender": "Masc",
+        "word": "2",
+        "lex": "2",
+        "pos": "NUM",
+        "Gender": null,
         "dep_func": "nmod"
     },
     {
-        "word": ".",
-        "lex": ".",
+        "word": "-",
+        "lex": "-",
         "pos": "PUNCT",
         "Gender": null,
         "dep_func": "punct"
+    },
+    {
+        "word": "2005",
+        "lex": "2005",
+        "pos": "NUM",
+        "Gender": null,
+        "dep_func": "nmod:tmod"
     }
 ]

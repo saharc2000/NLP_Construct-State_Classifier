@@ -56,7 +56,7 @@ def process_json(input_json):
     return result
 
 
-def add_unique_words_to_dict(sentence_list, word_dict):
+def add_unique_words_lex_to_dict(sentence_list, word_dict):
     punctuation = r"\"#$%&'()*+,-–./:;<=>?@[\]^_`{|}~"
     for item in sentence_list:
         lex_word = item.get("lex")
@@ -64,6 +64,13 @@ def add_unique_words_to_dict(sentence_list, word_dict):
             word_dict[lex_word] = len(word_dict)
     return word_dict
 
+def add_unique_words_to_dict(sentence_list, word_dict):
+    punctuation = r"\"#$%&'()*+,-–./:;<=>?@[\]^_`{|}~"
+    for item in sentence_list:
+        lex_word = item.get("word")
+        if not (len(lex_word) == 1 and lex_word in punctuation) and (lex_word and lex_word not in word_dict):
+            word_dict[lex_word] = len(word_dict)
+    return word_dict
 
 def get_lex(word):
     return word # complete later
@@ -93,45 +100,45 @@ df = pd.read_excel(file_path)
 column_name = 'משפט'
 column_sentence = []
 column_smixut = []
-sentences =[]
+sentences = []
 if column_name in df.columns:
     column_sentence = df[column_name].tolist()
 column_name1 = 'מבנה סמיכות'
 if column_name1 in df.columns:
     column_smixut = df[column_name1].tolist()
-    with open('output.json', 'w', encoding='utf-8') as f:
-        #sentence = "למשל , עובדים שהתלוננו על שחיקה סבלו מכאבי בטן כמעט פי שניים מעובדים שלא היו שחוקים ."
-        unique_words = {}
-        for sentence in column_sentence:
-            predictions = model.predict([sentence], tokenizer, output_style='json')
-            predictions_json = json.dumps(predictions, ensure_ascii=False)
-            f.write(predictions_json+'\n')
+    unique_words_lex = {}
+    unique_words = {}
+    # with open('output.json', 'w', encoding='utf-8') as f:
+    #     for sentence in column_sentence:
+    #         predictions = model.predict([sentence], tokenizer, output_style='json')
+    #         predictions_json = json.dumps(predictions, ensure_ascii=False)
+    #         f.write(predictions_json+'\n')
+    smixut_list = []
+    with open('smixut_file.json', 'w', encoding='utf-8') as smixut_file:
+        for smixut in column_smixut:
+            smixut_list.append(smixut)
+            smixut_json = json.dumps(smixut, ensure_ascii=False)
+            smixut_file.write(smixut_json + '\n')
+
         # Read 'output.json' and process the data
     with open('output.json', 'r', encoding='utf-8') as file:
         for line in file:
-            data = json.loads(line)
-            lst = process_json(data)
-            sentences.append(lst)
-            add_unique_words_to_dict(lst, unique_words)
-
+            if line:
+                data = json.loads(line)
+                lst = process_json(data)
+                sentences.append(lst)
+                add_unique_words_to_dict(lst, unique_words)
+                add_unique_words_lex_to_dict(lst, unique_words_lex)
 
     with open('unique_words.txt', 'w', encoding='utf-8') as file:
         print_to_file(unique_words, file)
 
-    
-
-    word = "כאבי בטן"
 
     lst = process_json(data)
     with open('output.txt', 'w', encoding='utf-8') as file1:
         print_to_file(lst, file1)
 
-    tokens1 = find_token_info(data, word1)
-    tokens2 = find_token_info(data, word2)
 
-    # with open('output.txt', 'w', encoding='utf-8') as file:
-    #     print_to_file(tokens1, file)
-    #     print_to_file(tokens2, file)
 
-else:
-    print(f"Column '{column_name}' does not exist in the file.")
+# else:
+#     print(f"Column '{column_name}' does not exist in the file.")
