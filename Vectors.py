@@ -187,6 +187,20 @@ def find_smixut_location_in_sentence(smixut, sentence):
         ind += 1
     return ind
 
+def get_unique_pos():
+    # Create a dictionary of unique POS tags with their corresponding index
+    unique_pos_tags = {
+        "NOUN": 0,  # Noun
+        "ADV": 1,  # Adverb
+        "NUM": 2,  # Numeral
+        "AUX": 3,  # Auxiliary Verb
+        "ADJ": 4,  # Adjective
+        "PUNCT": 5,  # Punctuation
+        "PROPN": 6,  # Proper Noun
+        "VERB": 7,  # Verb
+        "SCONJ": 8  # Subordinating Conjunction
+    }
+    return unique_pos_tags
 
 #vector that uses the word of the smixut
 def make_vector1(smixut_list, unique_words, sentences):
@@ -585,7 +599,233 @@ def make_vector18(smixut_list, unique_lex_words, sentences):
         i+=1
     return vectors_type18
 
+#vector that uses the pos of the word before and after the smixut
+def make_vector19(smixut_list, sentences):
+    # Create a list to store the resulting vectors
+    vectors_pos_tags = []
 
+    unique_pos_tags = get_unique_pos()
+
+    for i, smixut in enumerate(smixut_list):
+        if i >= len(sentences):
+            break
+
+
+        word1, word2 = smixut.split(' ', 1)
+        vector = [0] * len(unique_pos_tags)
+
+        # Find the POS tag of the word before the smixut
+        word_before = find_dict_in_shift_from_smixut(sentences[i], -1, word1)
+        if word_before != "err":
+            pos_before = word_before.get("pos")
+            if pos_before in unique_pos_tags:
+                vector[unique_pos_tags[pos_before]] = 1
+
+        # Find the POS tag of the word after the smixut
+        word_after = find_dict_in_shift_from_smixut(sentences[i], 1, word2)
+        if word_after != "err":
+            pos_after = word_after.get("pos")
+            if pos_after in unique_pos_tags:
+                vector[unique_pos_tags[pos_after]] = 1
+
+        # Append the vector to the list of vectors
+        vectors_pos_tags.append(vector)
+
+    return vectors_pos_tags
+
+#vector that uses the pos tags and lex of the words after and befroe smixut
+def make_vector20(smixut_list, unique_lex_words, sentences):
+    # Create a list to store the resulting vectors
+    combined_vectors = []
+    unique_pos_tags = get_unique_pos()
+
+    for i, smixut in enumerate(smixut_list):
+        if i >= len(sentences):
+            break
+
+        word1, word2 = smixut.split(' ', 1)
+
+        # Initialize the vector with zeros
+        vector = [0] * (len(unique_pos_tags) + len(unique_lex_words))
+
+        # Process the word before the smixut
+        word_before = find_dict_in_shift_from_smixut(sentences[i], -1, word1)
+        if word_before != "err":
+            pos_before = word_before.get("pos")
+            lex_before = word_before.get("lex")
+            if pos_before in unique_pos_tags:
+                vector[unique_pos_tags[pos_before]] = 1
+            if lex_before in unique_lex_words:
+                vector[len(unique_pos_tags) + unique_lex_words[lex_before]] = 1
+
+        # Process the word after the smixut
+        word_after = find_dict_in_shift_from_smixut(sentences[i], 1, word2)
+        if word_after != "err":
+            pos_after = word_after.get("pos")
+            lex_after = word_after.get("lex")
+            if pos_after in unique_pos_tags:
+                vector[unique_pos_tags[pos_after]] = 1
+            if lex_after in unique_lex_words:
+                vector[len(unique_pos_tags) + unique_lex_words[lex_after]] = 1
+
+        # Append the vector to the list of vectors
+        combined_vectors.append(vector)
+
+    return combined_vectors
+
+#vector that uses the pos tags and unqiue of the 2 words before
+def make_vector21(smixut_list, unique_words, sentences):
+    # Create a list to store the resulting vectors
+    combined_vectors = []
+    unique_pos_tags = get_unique_pos()
+
+    for i, smixut in enumerate(smixut_list):
+        if i >= len(sentences):
+            break
+
+        word1, word2 = smixut.split(' ', 1)
+
+        # Initialize the vector with zeros
+        vector = [0] * (len(unique_pos_tags) + len(unique_words))
+
+        # Process the word before the smixut
+        word_before = find_dict_in_shift_from_smixut(sentences[i], -1, word1)
+        if word_before != "err":
+            pos_before = word_before.get("pos")
+            word_before_text = word_before.get("word")
+            if pos_before in unique_pos_tags:
+                vector[unique_pos_tags[pos_before]] = 1
+            if word_before_text in unique_words:
+                vector[len(unique_pos_tags) + unique_words[word_before_text]] = 1
+
+        # Process the word after the smixut
+        word_before_2 = find_dict_in_shift_from_smixut(sentences[i], -2, word2)
+        if word_before_2  != "err":
+            pos_after = word_before_2 .get("pos")
+            word_before2_text = word_before_2 .get("word")
+            if pos_after in unique_pos_tags:
+                vector[unique_pos_tags[pos_after]] = 1
+            if word_before2_text in unique_words:
+                vector[len(unique_pos_tags) + unique_words[word_before2_text]] = 1
+
+        # Append the vector to the list of vectors
+        combined_vectors.append(vector)
+
+    return combined_vectors
+
+#vector that uses the pos tags and lex of the words after and befroe smixut
+def make_vector22(smixut_list, unique_lex_words, sentences):
+    # Create a list to store the resulting vectors
+    combined_vectors = []
+    unique_pos_tags = get_unique_pos()
+
+    for i, smixut in enumerate(smixut_list):
+        if i >= len(sentences):
+            break
+
+        word1, word2 = smixut.split(' ', 1)
+
+        # Initialize the vector with zeros
+        vector = [0] * (len(unique_pos_tags) + len(unique_lex_words))
+
+        # Process the word before the smixut
+        word_before = find_dict_in_shift_from_smixut(sentences[i], -1, word1)
+        if word_before != "err":
+            pos_before = word_before.get("pos")
+            lex_before = word_before.get("lex")
+            if pos_before in unique_pos_tags:
+                vector[unique_pos_tags[pos_before]] = 1
+            if lex_before in unique_lex_words:
+                vector[len(unique_pos_tags) + unique_lex_words[lex_before]] = 1
+
+        # Process the word after the smixut
+        word_after = find_dict_in_shift_from_smixut(sentences[i], 1, word2)
+        if word_after != "err":
+            pos_after = word_after.get("pos")
+            lex_after = word_after.get("lex")
+            if pos_after in unique_pos_tags:
+                vector[unique_pos_tags[pos_after]] = 1
+            if lex_after in unique_lex_words:
+                vector[len(unique_pos_tags) + unique_lex_words[lex_after]] = 1
+
+        # Append the vector to the list of vectors
+        combined_vectors.append(vector)
+
+    return combined_vectors
+
+#vector that uses the pos of the two words before smixut
+def make_vector23(smixut_list, sentences):
+    # Create a list to store the resulting vectors
+    vectors_pos_tags = []
+
+    unique_pos_tags = get_unique_pos()
+
+    for i, smixut in enumerate(smixut_list):
+        if i >= len(sentences):
+            break
+
+
+        word1, word2 = smixut.split(' ', 1)
+        vector = [0] * len(unique_pos_tags)
+
+        # Find the POS tag of the word before the smixut
+        word_before = find_dict_in_shift_from_smixut(sentences[i], -1, word1)
+        if word_before != "err":
+            pos_before = word_before.get("pos")
+            if pos_before in unique_pos_tags:
+                vector[unique_pos_tags[pos_before]] = 1
+
+        # Find the POS tag of the word after the smixut
+        word_before2 = find_dict_in_shift_from_smixut(sentences[i], -2, word2)
+        if word_before2 != "err":
+            pos_before2 = word_before2.get("pos")
+            if pos_before2 in unique_pos_tags:
+                vector[unique_pos_tags[pos_before2]] = 1
+
+        # Append the vector to the list of vectors
+        vectors_pos_tags.append(vector)
+
+    return vectors_pos_tags
+
+#vector that uses the pos tags and lex of the two words before smixut
+def make_vector24(smixut_list, unique_lex_words, sentences):
+    # Create a list to store the resulting vectors
+    combined_vectors = []
+    unique_pos_tags = get_unique_pos()
+
+    for i, smixut in enumerate(smixut_list):
+        if i >= len(sentences):
+            break
+
+        word1, word2 = smixut.split(' ', 1)
+
+        # Initialize the vector with zeros
+        vector = [0] * (len(unique_pos_tags) + len(unique_lex_words))
+
+        # Process the word before the smixut
+        word_before = find_dict_in_shift_from_smixut(sentences[i], -1, word1)
+        if word_before != "err":
+            pos_before = word_before.get("pos")
+            lex_before = word_before.get("lex")
+            if pos_before in unique_pos_tags:
+                vector[unique_pos_tags[pos_before]] = 1
+            if lex_before in unique_lex_words:
+                vector[len(unique_pos_tags) + unique_lex_words[lex_before]] = 1
+
+        # Process the word after the smixut
+        word_before2 = find_dict_in_shift_from_smixut(sentences[i], -2, word2)
+        if word_before2  != "err":
+            pos_before2 = word_before2 .get("pos")
+            lex_before2 = word_before2 .get("lex")
+            if pos_before2 in unique_pos_tags:
+                vector[unique_pos_tags[pos_before2]] = 1
+            if lex_before2 in unique_lex_words:
+                vector[len(unique_pos_tags) + unique_lex_words[lex_before2]] = 1
+
+        # Append the vector to the list of vectors
+        combined_vectors.append(vector)
+
+    return combined_vectors
 # sentence = 'בשנת 1948 השלים אפרים קישון את לימודיו בפיסול מתכת ובתולדות האמנות והחל לפרסם מאמרים הומוריסטיים'
 # predictions = model.predict([sentence], tokenizer, output_style='json')
 # predictions_json = json.dumps(predictions, ensure_ascii=False)
@@ -653,9 +893,11 @@ if column_name1 in df.columns:
 
 #vectors_type6 = make_vector6(smixut_list, unique_words, sentences)
 
-vectors_type18 = make_vector18(smixut_list, unique_words_lex, sentences)
+# vectors_type19 = make_vector19(smixut_list, sentences)
+vectors_type24= make_vector24(smixut_list, unique_words_lex, sentences)
 
-print(vectors_type18)
+
+print(vectors_type24)
 #print(make_vector7(smixut_list, unique_words, sentences))
 # else:
 #     print(f"Column '{column_name}' does not exist in the file.")
