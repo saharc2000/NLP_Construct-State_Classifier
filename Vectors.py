@@ -2,13 +2,12 @@
 import json
 import pandas as pd
 import string
+from transformers import AutoModel, AutoTokenizer
 
-# from transformers import AutoModel, AutoTokenizer
+tokenizer = AutoTokenizer.from_pretrained('dicta-il/dictabert-tiny-joint')
+model = AutoModel.from_pretrained('dicta-il/dictabert-tiny-joint', trust_remote_code=True)
 
-# tokenizer = AutoTokenizer.from_pretrained('dicta-il/dictabert-tiny-joint')
-# model = AutoModel.from_pretrained('dicta-il/dictabert-tiny-joint', trust_remote_code=True)
-
-# model.eval()
+model.eval()
 
 def find_token_info(data, search_token):
     for entry in data:
@@ -826,6 +825,36 @@ def make_vector24(smixut_list, unique_lex_words, sentences):
         combined_vectors.append(vector)
 
     return combined_vectors
+
+
+
+def make_parameters():
+    unique_words_lex = {}
+    unique_words = {}
+    unique_genders = { "Masc", "Fem" }
+    unique_pos = {}
+    unique_dep_func = {}
+    smixut_list = []
+    with open('smixut_file.json', 'r', encoding='utf-8') as smixut_file:
+        for smixut in smixut_file:
+            smixut_list.append(smixut)
+        # Read 'output.json' and process the data
+    with open('output.json', 'r', encoding='utf-8') as file:
+        for line in file:
+            if line:
+                data = json.loads(line)
+                lst = process_json(data)
+                sentences.append(lst)
+                add_unique_words_to_dict(lst, unique_words)
+                add_unique_words_lex_to_dict(lst, unique_words_lex)
+                add_unique_pos_to_dict(lst, unique_pos)
+                add_unique_dep_func_to_dict(lst, unique_dep_func)
+    add_smixut_to_uniqe_words(smixut_list, unique_words)
+
+    return sentences,smixut_list ,unique_words, unique_genders, unique_pos, unique_dep_func, unique_words_lex
+
+
+
 # sentence = 'בשנת 1948 השלים אפרים קישון את לימודיו בפיסול מתכת ובתולדות האמנות והחל לפרסם מאמרים הומוריסטיים'
 # predictions = model.predict([sentence], tokenizer, output_style='json')
 # predictions_json = json.dumps(predictions, ensure_ascii=False)
@@ -851,15 +880,15 @@ if column_name1 in df.columns:
     unique_dep_func = {}
     # with open('output.json', 'w', encoding='utf-8') as f:
     #     for sentence in column_sentence:
-    #         predictions = model.predict([sentence], tokenizer, output_style='json')
-    #         predictions_json = json.dumps(predictions, ensure_ascii=False)
-    #         f.write(predictions_json+'\n')
+    #          predictions = model.predict([sentence], tokenizer, output_style='json')
+    #          predictions_json = json.dumps(predictions, ensure_ascii=False)
+    #          f.write(predictions_json+'\n')
     smixut_list = []
-    with open('smixut_file.json', 'w', encoding='utf-8') as smixut_file:
-        for smixut in column_smixut:
-            smixut_list.append(smixut)
-            smixut_json = json.dumps(smixut, ensure_ascii=False)
-            smixut_file.write(smixut_json + '\n')
+  #  with open('smixut_file.json', 'w', encoding='utf-8') as smixut_file:
+      #  for smixut in column_smixut:
+         #  smixut_list.append(smixut)
+         #   smixut_json = json.dumps(smixut, ensure_ascii=False)
+        #    smixut_file.write(smixut_json + '\n')
         # Read 'output.json' and process the data
     with open('output.json', 'r', encoding='utf-8') as file:
         for line in file:
@@ -873,31 +902,20 @@ if column_name1 in df.columns:
                 add_unique_dep_func_to_dict(lst, unique_dep_func)
 
 
-    # with open('unique_words.txt', 'w', encoding='utf-8') as file:
-    #     print_to_file(unique_words, file)
 
-    # with open('unique_lex_words.txt', 'w', encoding='utf-8') as file:
-    #     print_to_file(unique_words_lex, file)
     add_smixut_to_uniqe_words(smixut_list, unique_words)
     lst = process_json(data)
     with open('output.txt', 'w', encoding='utf-8') as file1:
         print_to_file(sentences, file1)
-    with open('vec_type_1.txt', 'w', encoding='utf-8') as filetype1:
-        vectors_type1 = make_vector1(smixut_list, unique_words, sentences)
-        for vector in vectors_type1:
-            print_to_file(vector, filetype1)
-    with open('vec_type_2.txt', 'w', encoding='utf-8') as filetype2:
-        vectors_type2 = make_vector2(smixut_list, unique_words_lex, sentences)
-        for vector in vectors_type2:
-            print_to_file(vector, filetype2)
-
-#vectors_type6 = make_vector6(smixut_list, unique_words, sentences)
-
-# vectors_type19 = make_vector19(smixut_list, sentences)
-vectors_type24= make_vector24(smixut_list, unique_words_lex, sentences)
 
 
-print(vectors_type24)
-#print(make_vector7(smixut_list, unique_words, sentences))
-# else:
-#     print(f"Column '{column_name}' does not exist in the file.")
+
+
+def call_to_vector1():
+    sentences, smixut_list, unique_words, unique_genders, unique_pos, unique_dep_func, unique_words_lex = make_parameters()
+    return make_vector1(smixut_list, unique_words, sentences)
+
+
+def call_to_vector2():
+    sentences, smixut_list, unique_words, unique_genders, unique_pos, unique_dep_func, unique_words_lex = make_parameters()
+    return make_vector2(smixut_list, unique_words_lex, sentences)
