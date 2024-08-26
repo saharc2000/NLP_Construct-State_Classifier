@@ -28,7 +28,6 @@ def get_tag_list():
     column_name = 'תיוג'
     if column_name in df.columns:
         tag_list = df[column_name].tolist()
-    print(tag_list)
     return tag_list
 
 
@@ -66,11 +65,18 @@ def perform_kfold_cv(X, y):
     return mean_accuracy
 
 
-def nitzan():
-    x_values = call_to_vector2()
-    y_values = get_tag_list()
-    print(perform_kfold_cv(x_values, y_values))
+def calculate_accuracy_for_all_vectors():
+    results = {}
+    for i in range(1, 4):
+        function_name = f"call_to_vector{i}"
+        make_vector_function = globals()[function_name]
+        vectors_i = make_vector_function()
+        tag_list = get_tag_list()
+        accuracy_i = perform_kfold_cv(vectors_i, tag_list)
+        results[function_name] = accuracy_i
+        print("Vector type {} avg accuracy {}".format(i, accuracy_i))
+    # return results
 
 
 
-nitzan()
+calculate_accuracy_for_all_vectors()
