@@ -1,7 +1,10 @@
 import json
 import pandas as pd
+import json
+import pandas as pd
 import string
 from transformers import AutoModel, AutoTokenizer
+
 
 
 class DataStore:
@@ -27,7 +30,6 @@ class DataStore:
             "dep_func": dep_func
         }
         return result
-
 
     def process_json(self, input_json):
         # Extract tokens from the input JSON
@@ -71,8 +73,9 @@ class DataStore:
             lex_dep_func = item.get("dep_func")
             if not (lex_word in punctuation) and (lex_dep_func and lex_dep_func not in dep_func_dict):
                 dep_func_dict[lex_dep_func] = len(dep_func_dict)
-        return dep_func_dict
 
+        print(dep_func_dict)
+        return dep_func_dict
 
     def add_smixut_to_uniqe_words(self, smixut_list, uniqe_words):
         punctuation = r"\"#$%&'()*+,-–./:;<=>?@[\]^_`{|}~"
@@ -86,13 +89,12 @@ class DataStore:
 
         return uniqe_words
 
-
     def make_parameters(self):
         unique_words_lex = {}
         unique_words = {}
         unique_genders = { "Masc", "Fem" }
-        unique_pos = {}
-        unique_dep_func = {}
+        unique_pos = self.get_unique_pos()
+        unique_dep_func = self.get_unique_dep_func()
         smixut_list = []
         sentences = []
         with open('smixut_file.json', 'r', encoding='utf-8') as smixut_file:
@@ -107,14 +109,47 @@ class DataStore:
                     sentences.append(lst)
                     self.add_unique_words_to_dict(lst, unique_words)
                     self.add_unique_words_lex_to_dict(lst, unique_words_lex)
-                    self.add_unique_pos_to_dict(lst, unique_pos)
-                    self.add_unique_dep_func_to_dict(lst, unique_dep_func)
+                    # self.add_unique_pos_to_dict(lst, unique_pos)
+                    # self.add_unique_dep_func_to_dict(lst, unique_dep_func)
         self.add_smixut_to_uniqe_words(smixut_list, unique_words)
 
         return sentences,smixut_list ,unique_words, unique_genders, unique_pos, unique_dep_func, unique_words_lex
 
+    def get_unique_dep_func(self):
+        unique_dep_funcs = {
+            "nsubj": 0,  # Nominal Subject
+            "obj": 1,  # Object
+            "obl": 2,  # Oblique
+            "advmod": 3,  # Adverbial Modifier
+            "acl:relcl": 4,  # Relative Clause Modifier
+            "compound:smixut": 5,  # Compound Smixut
+            "cop": 6,  # Copula
+            "punct": 7  # Punctuation
+        }
 
-    def copied_from_vectors_as_is(self):
+        return unique_dep_funcs
+
+
+    def get_unique_pos(self):
+        # Create a dictionary of unique POS tags with their corresponding index
+        unique_pos = {
+            "NOUN": 0,  # Noun
+            "ADV": 1,  # Adverb
+            "NUM": 2,  # Numeral
+            "AUX": 3,  # Auxiliary Verb
+            "ADJ": 4,  # Adjective
+            "PUNCT": 5,  # Punctuation
+            "PROPN": 6,  # Proper Noun
+            "VERB": 7,  # Verb
+            "SCONJ": 8  # Subordinating Conjunction
+        }
+        return unique_pos
+
+
+    def analyze_xl_file(self):
+        tokenizer = AutoTokenizer.from_pretrained('dicta-il/dictabert-tiny-joint')
+        model = AutoModel.from_pretrained('dicta-il/dictabert-tiny-joint', trust_remote_code=True)
+        model.eval()
         file_path = 'Sentence_classification.xlsx'
         df = pd.read_excel(file_path)
         column_name = 'משפט'
@@ -131,32 +166,26 @@ class DataStore:
             unique_genders = {"Masc", "Fem"}
             unique_pos = {}
             unique_dep_func = {}
-            # with open('output.json', 'w', encoding='utf-8') as f:
-            #     for sentence in column_sentence:
-            #          predictions = model.predict([sentence], tokenizer, output_style='json')
-            #          predictions_json = json.dumps(predictions, ensure_ascii=False)
-            #          f.write(predictions_json+'\n')
+            with open('output.json', 'w', encoding='utf-8') as f:
+                for sentence in column_sentence:
+                     predictions = model.predict([sentence], tokenizer, output_style='json')
+                     predictions_json = json.dumps(predictions, ensure_ascii=False)
+                     f.write(predictions_json+'\n')
             smixut_list = []
-            #  with open('smixut_file.json', 'w', encoding='utf-8') as smixut_file:
-            #  for smixut in column_smixut:
-            #  smixut_list.append(smixut)
-            #   smixut_json = json.dumps(smixut, ensure_ascii=False)
-            #    smixut_file.write(smixut_json + '\n')
+            with open('smixut_file.json', 'w', encoding='utf-8') as smixut_file:
+                for smixut in column_smixut:
+                    smixut_list.append(smixut)
+                    smixut_json = json.dumps(smixut, ensure_ascii=False)
+                    smixut_file.write(smixut_json + '\n')
             # Read 'output.json' and process the data
-            # with open('output.json', 'r', encoding='utf-8') as file:
-            #     for line in file:
-            #         if line:
-            #             data = json.loads(line)
-            #             lst = process_json(data)
-            #             sentences.append(lst)
-            #             add_unique_words_to_dict(lst, unique_words)
-            #             add_unique_words_lex_to_dict(lst, unique_words_lex)
-            #             add_unique_pos_to_dict(lst, unique_pos)
-            #             add_unique_dep_func_to_dict(lst, unique_dep_func)
 
             # add_smixut_to_uniqe_words(smixut_list, unique_words)
             # lst = process_json(data)
             # with open('output.txt', 'w', encoding='utf-8') as file1:
             #     print_to_file(sentences, file1)
 
+            # with open('self.unique_words.txt', 'w', encoding='utf-8') as file:
+            #     print_to_file(self.unique_words, file)
 
+            # with open('self.unique_words_lex.txt', 'w', encoding='utf-8') as file:
+            #     print_to_file(self.unique_words_lex, file)
