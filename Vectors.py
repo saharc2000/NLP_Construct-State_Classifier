@@ -204,6 +204,20 @@ def get_unique_pos():
     }
     return unique_pos_tags
 
+def get_unique_dep_func():
+    unique_dep_funcs = {
+        "nsubj": 0,  # Nominal Subject
+        "obj": 1,  # Object
+        "obl": 2,  # Oblique
+        "advmod": 3,  # Adverbial Modifier
+        "acl:relcl": 4,  # Relative Clause Modifier
+        "compound:smixut": 5,  # Compound Smixut
+        "cop": 6,  # Copula
+        "punct": 7  # Punctuation
+    }
+
+    return unique_dep_funcs
+
 #vector that uses the word of the smixut
 def make_vector1(smixut_list, unique_words, sentences):
     #create list of vectors
@@ -323,31 +337,46 @@ def make_vector6(smixut_list, unique_words, sentences):
         i+=1
     return vectors_type6
 
+#vector that uses the word before and after smixut with pos and dep func
+def make_vector7(smixut_list, sentences):
+    # Create a list to store the resulting vectors
+    pos_dep_func_vectors = []
+    unique_dep_funcs= get_unique_dep_func()
+    unique_pos_tags = get_unique_pos()
 
-def make_vector7(smixut_list, unique_words, sentences):
-    punctuation = r"\"#$%&'()*+,-–./:;<=>?@[\]^_`{|}~"
-    vectors_type7 = []
-    ind = 0
-    for smixut in smixut_list:
-        vector = [0] * len(unique_words)
-        curr_sentence = sentences[ind]
-        smixut_loc1 = find_smixut_location_in_sentence(smixut, curr_sentence)
-        smixut_loc2 = smixut_loc1 + 1
-        loc = smixut_loc1
-        while loc >= 0:
-            curr_word = curr_sentence[loc].get("word")
-            if curr_word not in punctuation:
-                vector[unique_words[curr_word]] = loc - smixut_loc1
-            loc -= 1
-        loc = smixut_loc2
-        while loc < len(curr_sentence):
-            curr_word = curr_sentence[loc].get("word")
-            if curr_word not in punctuation:
-                vector[unique_words[curr_word]] = loc - smixut_loc2
-            loc += 1
-        vectors_type7.append(vector)
-    ind += 1
-    return vectors_type7
+    for i, smixut in enumerate(smixut_list):
+        if i >= len(sentences):
+            break
+
+        word1, word2 = smixut.split(' ', 1)
+
+        # Initialize the vector with zeros
+        vector = [0] * (2 * len(unique_pos_tags) + 2 * len(unique_dep_funcs))
+
+        # Process the word before the smixut
+        word_before = find_dict_in_shift_from_smixut(sentences[i], -1, word1)
+        if word_before != "err":
+            pos_before = word_before.get("pos")
+            dep_func_before = word_before.get("dep_func")
+            if pos_before in unique_pos_tags:
+                vector[unique_pos_tags[pos_before]] = 1
+            if dep_func_before in unique_dep_funcs:
+                vector[len(unique_pos_tags) + unique_dep_funcs[dep_func_before]] = 1
+
+        # Process the word after the smixut
+        word_after = find_dict_in_shift_from_smixut(sentences[i], 1, word2)
+        if word_after != "err":
+            pos_after = word_after.get("pos")
+            dep_func_after = word_after.get("dep_func")
+            if pos_after in unique_pos_tags:
+                vector[len(unique_pos_tags) * 2 + unique_pos_tags[pos_after]] = 1
+            if dep_func_after in unique_dep_funcs:
+                vector[len(unique_pos_tags) * 2 + len(unique_dep_funcs) + unique_dep_funcs[dep_func_after]] = 1
+
+        # Append the vector to the list of vectors
+        pos_dep_func_vectors.append(vector)
+
+    return pos_dep_func_vectors
 
 #vector that uses the word of 2 words before and after the smixut
 def make_vector8(smixut_list, unique_words, sentences):
@@ -822,10 +851,235 @@ def make_vector24(smixut_list, unique_lex_words, sentences):
 
         # Append the vector to the list of vectors
         combined_vectors.append(vector)
-
     return combined_vectors
 
+#vector that uses the dep funcs and lex of the two words one before one after smixut
+def make_vector25(smixut_list, unique_lex_words, sentences):
+    # Create a list to store the resulting vectors
+    dep_lex_vectors = []
+    unique_dep_func = get_unique_dep_func()
 
+    for i, smixut in enumerate(smixut_list):
+        if i >= len(sentences):
+            break
+
+        word1, word2 = smixut.split(' ', 1)
+
+        # Initialize the vector with zeros
+        vector = [0] * (len(unique_dep_funcs) + len(unique_lex_words))
+
+        # Process the word before the smixut
+        word_before = find_dict_in_shift_from_smixut(sentences[i], -1, word1)
+        if word_before != "err":
+            dep_func_before = word_before.get("dep_func")
+            lex_before = word_before.get("lex")
+            if dep_func_before in unique_dep_funcs:
+                vector[unique_dep_funcs[dep_func_before]] = 1
+            if lex_before in unique_lex_words:
+                vector[len(unique_dep_funcs) + unique_lex_words[lex_before]] = 1
+
+        # Process the word after the smixut
+        word_after = find_dict_in_shift_from_smixut(sentences[i], 1, word2)
+        if word_after != "err":
+            dep_func_after = word_after.get("dep_func")
+            lex_after = word_after.get("lex")
+            if dep_func_after in unique_dep_funcs:
+                vector[unique_dep_funcs[dep_func_after]] = 1
+            if lex_after in unique_lex_words:
+                vector[len(unique_dep_funcs) + unique_lex_words[lex_after]] = 1
+
+        # Append the vector to the list of vectors
+        dep_lex_vectors.append(vector)
+
+    return dep_lex_vectors
+
+#vector that uses the dep funcs and lex of the two words before smixut
+def make_vector26(smixut_list, unique_lex_words, sentences):
+    # Create a list to store the resulting vectors
+    dep_lex_vectors = []
+    unique_dep_funcs = get_unique_dep_func()
+
+    for i, smixut in enumerate(smixut_list):
+        if i >= len(sentences):
+            break
+
+        word1, word2 = smixut.split(' ', 1)
+
+        # Initialize the vector with zeros
+        vector = [0] * (len(unique_dep_funcs) + len(unique_lex_words))
+
+        # Process the word before the smixut
+        word_before = find_dict_in_shift_from_smixut(sentences[i], -1, word1)
+        if word_before != "err":
+            dep_func_before = word_before.get("dep_func")
+            lex_before = word_before.get("lex")
+            if dep_func_before in unique_dep_funcs:
+                vector[unique_dep_funcs[dep_func_before]] = 1
+            if lex_before in unique_lex_words:
+                vector[len(unique_dep_funcs) + unique_lex_words[lex_before]] = 1
+
+        # Process the word after the smixut
+        word_after = find_dict_in_shift_from_smixut(sentences[i], -2, word2)
+        if word_after != "err":
+            dep_func_after = word_after.get("dep_func")
+            lex_after = word_after.get("lex")
+            if dep_func_after in unique_dep_funcs:
+                vector[unique_dep_funcs[dep_func_after]] = 1
+            if lex_after in unique_lex_words:
+                vector[len(unique_dep_funcs) + unique_lex_words[lex_after]] = 1
+
+        # Append the vector to the list of vectors
+        dep_lex_vectors.append(vector)
+
+    return dep_lex_vectors
+
+#vector that uses the dep funcs of word after and before of smixut
+def make_vector27(smixut_list, sentences):
+    # Create a list to store the resulting vectors
+    dep_func_vectors = []
+    unique_dep_funcs = get_unique_dep_func()
+
+    for i, smixut in enumerate(smixut_list):
+        if i >= len(sentences):
+            break
+
+        word1, word2 = smixut.split(' ', 1)
+
+        # Initialize the vector with zeros
+        vector = [0] * (2 * len(unique_dep_funcs))
+
+        # Process the word before the smixut
+        word_before = find_dict_in_shift_from_smixut(sentences[i], -1, word1)
+        if word_before != "err":
+            dep_func_before = word_before.get("dep_func")
+            if dep_func_before in unique_dep_funcs:
+                vector[unique_dep_funcs[dep_func_before]] = 1
+
+        # Process the word after the smixut
+        word_after = find_dict_in_shift_from_smixut(sentences[i], 1, word2)
+        if word_after != "err":
+            dep_func_after = word_after.get("dep_func")
+            if dep_func_after in unique_dep_funcs:
+                vector[len(unique_dep_funcs) + unique_dep_funcs[dep_func_after]] = 1
+
+        # Append the vector to the list of vectors
+        dep_func_vectors.append(vector)
+
+    return dep_func_vectors
+
+#vector that uses the dep funcs and unique words of the two words one before one after smixut
+def make_vector28(smixut_list, unique_words, sentences):
+    # Create a list to store the resulting vectors
+    dep_func_word_vectors = []
+    unique_dep_funcs = get_unique_dep_func()
+
+    for i, smixut in enumerate(smixut_list):
+        if i >= len(sentences):
+            break
+
+        word1, word2 = smixut.split(' ', 1)
+
+        # Initialize the vector with zeros
+        vector = [0] * (2 * len(unique_dep_funcs) + 2 * len(unique_words))
+
+        # Process the word before the smixut
+        word_before = find_dict_in_shift_from_smixut(sentences[i], -1, word1)
+        if word_before != "err":
+            dep_func_before = word_before.get("dep_func")
+            word_before_text = word_before.get("word")
+            if dep_func_before in unique_dep_funcs:
+                vector[unique_dep_funcs[dep_func_before]] = 1
+            if word_before_text in unique_words:
+                vector[len(unique_dep_funcs) + unique_words[word_before_text]] = 1
+
+        # Process the word after the smixut
+        word_after = find_dict_in_shift_from_smixut(sentences[i], 1, word2)
+        if word_after != "err":
+            dep_func_after = word_after.get("dep_func")
+            word_after_text = word_after.get("word")
+            if dep_func_after in unique_dep_funcs:
+                vector[len(unique_dep_funcs) * 2 + unique_dep_funcs[dep_func_after]] = 1
+            if word_after_text in unique_words:
+                vector[len(unique_dep_funcs) * 2 + len(unique_words) + unique_words[word_after_text]] = 1
+
+        # Append the vector to the list of vectors
+        dep_func_word_vectors.append(vector)
+
+    return dep_func_word_vectors
+
+#vector that uses the dep funcs and unique words of the two words before smixut
+def make_vector29(smixut_list, unique_words, sentences):
+    # Create a list to store the resulting vectors
+    dep_func_word_vectors = []
+    unique_dep_funcs = get_unique_dep_func()
+
+    for i, smixut in enumerate(smixut_list):
+        if i >= len(sentences):
+            break
+
+        word1, word2 = smixut.split(' ', 1)
+
+        # Initialize the vector with zeros
+        vector = [0] * (2 * len(unique_dep_funcs) + 2 * len(unique_words))
+
+        # Process the word before the smixut
+        word_before = find_dict_in_shift_from_smixut(sentences[i], -1, word1)
+        if word_before != "err":
+            dep_func_before = word_before.get("dep_func")
+            word_before_text = word_before.get("word")
+            if dep_func_before in unique_dep_funcs:
+                vector[unique_dep_funcs[dep_func_before]] = 1
+            if word_before_text in unique_words:
+                vector[len(unique_dep_funcs) + unique_words[word_before_text]] = 1
+
+        # Process the word after the smixut
+        word_after = find_dict_in_shift_from_smixut(sentences[i], -2, word2)
+        if word_after != "err":
+            dep_func_after = word_after.get("dep_func")
+            word_after_text = word_after.get("word")
+            if dep_func_after in unique_dep_funcs:
+                vector[len(unique_dep_funcs) * 2 + unique_dep_funcs[dep_func_after]] = 1
+            if word_after_text in unique_words:
+                vector[len(unique_dep_funcs) * 2 + len(unique_words) + unique_words[word_after_text]] = 1
+
+        # Append the vector to the list of vectors
+        dep_func_word_vectors.append(vector)
+
+    return dep_func_word_vectors
+
+#vector that uses the dep funcs of two words before smixut
+def make_vector30(smixut_list, sentences):
+    # Create a list to store the resulting vectors
+    dep_func_vectors = []
+    unique_dep_funcs = get_unique_dep_func()
+
+    for i, smixut in enumerate(smixut_list):
+        if i >= len(sentences):
+            break
+
+        word1, word2 = smixut.split(' ', 1)
+
+        # Initialize the vector with zeros
+        vector = [0] * (2 * len(unique_dep_funcs))
+
+        # Process the word before the smixut
+        word_before = find_dict_in_shift_from_smixut(sentences[i], -1, word1)
+        if word_before != "err":
+            dep_func_before = word_before.get("dep_func")
+            if dep_func_before in unique_dep_funcs:
+                vector[unique_dep_funcs[dep_func_before]] = 1
+
+        # Process the word after the smixut
+        word_after = find_dict_in_shift_from_smixut(sentences[i], -2, word2)
+        if word_after != "err":
+            dep_func_after = word_after.get("dep_func")
+            if dep_func_after in unique_dep_funcs:
+                vector[len(unique_dep_funcs) + unique_dep_funcs[dep_func_after]] = 1
+
+        # Append the vector to the list of vectors
+        dep_func_vectors.append(vector)
+
+    return dep_func_vectors
 
 # def make_parameters():
 #     unique_words_lex = {}
@@ -907,8 +1161,34 @@ def make_vector24(smixut_list, unique_lex_words, sentences):
 #     with open('output.txt', 'w', encoding='utf-8') as file1:
 #         print_to_file(sentences, file1)
 
+    # with open('unique_words.txt', 'w', encoding='utf-8') as file:
+    #     print_to_file(unique_words, file)
+
+    # with open('unique_lex_words.txt', 'w', encoding='utf-8') as file:
+    #     print_to_file(unique_words_lex, file)
+#     add_smixut_to_uniqe_words(smixut_list, unique_words)
+#     lst = process_json(data)
+#     with open('output.txt', 'w', encoding='utf-8') as file1:
+#         print_to_file(sentences, file1)
+#     with open('vec_type_1.txt', 'w', encoding='utf-8') as filetype1:
+#         vectors_type1 = make_vector1(smixut_list, unique_words, sentences)
+#         for vector in vectors_type1:
+#             print_to_file(vector, filetype1)
+#     with open('vec_type_2.txt', 'w', encoding='utf-8') as filetype2:
+#         vectors_type2 = make_vector2(smixut_list, unique_words_lex, sentences)
+#         for vector in vectors_type2:
+#             print_to_file(vector, filetype2)
+
+#vectors_type6 = make_vector6(smixut_list, unique_words, sentences)
+
+# vectors_type19 = make_vector19(smixut_list, sentences)
+vectors_type28= make_vector7(smixut_list, sentences)
 
 
+print(vectors_type28)
+#print(make_vector7(smixut_list, unique_words, sentences))
+# else:
+#     print(f"Column '{column_name}' does not exist in the file.")
 
 # def call_to_vector1():
 #     sentences, smixut_list, unique_words, unique_genders, unique_pos, unique_dep_func, unique_words_lex = make_parameters()
