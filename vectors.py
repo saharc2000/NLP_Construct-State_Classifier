@@ -24,7 +24,6 @@ class vector:
                     return token_info
         return None
 
-
     def print_to_file(self,token_info, file):
         if token_info:
             # with open('output.txt', 'w', encoding='utf-8') as file:
@@ -32,14 +31,13 @@ class vector:
         else:
             print(f"Token not found.")
 
-
     def get_lex(self,word,sentence):
         for item in sentence:
             if item.get("word") == word:
                 return item.get("lex")
         return "error"
 
-    def find_string_in_dict_list(self,sentence, target):
+    def find_string_in_dict_list(self, sentence, target):
         for word_dict in sentence:
             if target in word_dict.get("word"):
                 return word_dict.get("lex")
@@ -72,7 +70,6 @@ class vector:
             i+=1
         return "err"
 
-
     def find_pos_in_dict_list(self,sentence, target):
         for word_dict in sentence:
             if target in word_dict.get("word"):
@@ -85,7 +82,6 @@ class vector:
                 return word_dict.get("dep_func")
         return "err"  # Return -1 if the target string is not found
 
-
        # Returns the key associated with the given value in a dictionary.
 
        # Args:
@@ -94,13 +90,11 @@ class vector:
 
        # Returns:
          #   The key associated with the target_value if found, else None.
-
     def get_key_by_value(self,dict, target_value):
         for key, value in dict.items():
             if key == target_value:
                 return value
         return None
-
 
     def find_smixut_location_in_sentence(self,smixut, sentence):
         word1, word2 = smixut.split(' ', 1)
@@ -142,7 +136,7 @@ class vector:
 
     #vector that uses the word of the smixut
     def make_vector1(self):
-        print("[Vector1]:")
+        # print("[Vector1]:")
         #create list of vectors
         vectors_type1 = []
         self.unique_words = self.unique_words
@@ -158,7 +152,7 @@ class vector:
 
     #vector that uses the lex of the smixut
     def make_vector2(self):
-        print("[Vector2]:")
+        # print("[Vector2]:")
         #create list of vectors
         vectors_type2 = []
         i = 0
@@ -182,9 +176,8 @@ class vector:
         return vectors_type2
 
     #vector that marks all the words in the sentence besides the smixut
-    #assuming that the smixut is the word where "dep_func": "compound:smixut" and the previous one
     def make_vector3(self):
-        print("[Vector3]:")
+        # print("[Vector3]:")
         vectors_type3 = []
         punctuation = r"\"#$%&'()*+,-–./:;<=>?@[\]^_`{|}~"
         for i, sentence in enumerate(self.sentences):
@@ -202,7 +195,7 @@ class vector:
 
     #vector that uses the pos of the smixut
     def make_vector4(self):
-        print("[Vector4]:")
+        # print("[Vector4]:")
         vector_type4 = []
         i=0
         for smixut in self.smixut_list:
@@ -224,7 +217,7 @@ class vector:
 
     #vector that uses the dep_func of the smixut
     def make_vector5(self):
-        print("[Vector5]:")
+        # print("[Vector5]:")
         vector_type5 = []
         i=0
         for smixut in self.smixut_list:
@@ -246,7 +239,7 @@ class vector:
 
     #vector that uses the word of the one word before and after the smixut
     def make_vector6(self):
-        print("[Vector6]:")
+        # print("[Vector6]:")
         #create list of vectors
         vectors_type6 = []
         i = 0
@@ -268,7 +261,7 @@ class vector:
 
     #vector that uses the word before and after smixut with pos and dep func
     def make_vector7(self):
-        print("[Vector7]:")
+        # print("[Vector7]:")
         # Create a list to store the resulting vectors
         pos_dep_func_vectors = []
 
@@ -373,9 +366,9 @@ class vector:
             word_before = self.find_dict_in_shift_from_smixut(self.sentences[i], -1, word1)
             word_after = self.find_dict_in_shift_from_smixut(self.sentences[i], 1, word2)
             if((word_before != "err")  ):
-                vector[self.unique_words[word_before.get("lex")]] = 1
+                vector[self.unique_words_lex[word_before.get("lex")]] = 1
             if ((word_after != "err")  ):
-                vector[self.unique_words[word_after.get("lex")]] = 1
+                vector[self.unique_words_lex[word_after.get("lex")]] = 1
             vectors_type10.append(vector)
             i+=1
         return vectors_type10

@@ -6,7 +6,6 @@ import string
 from transformers import AutoModel, AutoTokenizer
 
 
-
 class DataStore:
     def __init__(self):
         #assuming that the files exists
@@ -39,7 +38,6 @@ class DataStore:
         result = [self.convert_json_to_dict(token) for token in tokens]
 
         return result
-
 
     def add_unique_words_lex_to_dict(self, sentence_list, word_dict):
         punctuation = r"\"#$%&'()*+,-–./:;<=>?@[\]^_`{|}~"
@@ -99,6 +97,7 @@ class DataStore:
         sentences = []
         with open('smixut_file.json', 'r', encoding='utf-8') as smixut_file:
             for smixut in smixut_file:
+                smixut = smixut.replace('\n', '').replace('"', '').replace("'", '')
                 smixut_list.append(smixut)
             # Read 'output.json' and process the data
         with open('output.json', 'r', encoding='utf-8') as file:
@@ -124,11 +123,27 @@ class DataStore:
             "acl:relcl": 4,  # Relative Clause Modifier
             "compound:smixut": 5,  # Compound Smixut
             "cop": 6,  # Copula
-            "punct": 7  # Punctuation
+            "punct": 7,  # Punctuation
+            "nmod": 8,
+            "appos": 9,
+            "conj": 10,
+            "case": 11,
+            "det": 12,
+            "nmod:poss": 13,
+            "fixed": 14,
+            "amod": 15,
+            "parataxis": 16,
+            "acl": 17,
+            "nummod": 18,
+            "ccomp": 19,
+            "root": 20,
+            "nsubj:cop": 21,
+            "obl:tmod": 22,
+            "xcomp": 23,
+            "orphan": 24
         }
 
         return unique_dep_funcs
-
 
     def get_unique_pos(self):
         # Create a dictionary of unique POS tags with their corresponding index
@@ -141,10 +156,14 @@ class DataStore:
             "PUNCT": 5,  # Punctuation
             "PROPN": 6,  # Proper Noun
             "VERB": 7,  # Verb
-            "SCONJ": 8  # Subordinating Conjunction
+            "SCONJ": 8,  # Subordinating Conjunction
+            "ADP": 9,
+            "DET": 10,
+            "CCONJ": 11,
+            "X": 12,
+            "PRON": 13
         }
         return unique_pos
-
 
     def analyze_xl_file(self):
         tokenizer = AutoTokenizer.from_pretrained('dicta-il/dictabert-tiny-joint')
