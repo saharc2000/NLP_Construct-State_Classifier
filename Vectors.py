@@ -2,13 +2,21 @@
 import json
 import pandas as pd
 import string
+from transformers import AutoModel, AutoTokenizer
+from initializer import DataStore
 
-# from transformers import AutoModel, AutoTokenizer
+tokenizer = AutoTokenizer.from_pretrained('dicta-il/dictabert-tiny-joint')
+model = AutoModel.from_pretrained('dicta-il/dictabert-tiny-joint', trust_remote_code=True)
 
-# tokenizer = AutoTokenizer.from_pretrained('dicta-il/dictabert-tiny-joint')
-# model = AutoModel.from_pretrained('dicta-il/dictabert-tiny-joint', trust_remote_code=True)
-
-# model.eval()
+model.eval()
+data = DataStore()
+sentences = data.sentences
+smixut_list = data.smixut_list
+unique_words = data.unique_words
+unique_genders = data.unique_genders
+unique_pos = data.unique_pos
+unique_dep_func = data.unique_dep_func
+unique_words_lex = data.unique_words_lex
 
 def find_token_info(data, search_token):
     for entry in data:
@@ -26,69 +34,69 @@ def print_to_file(token_info, file):
         print(f"Token not found.")
 
 
-def convert_json_to_dict(json_data):
-    # Extract the necessary fields from the JSON data
-    word = json_data.get("token")
-    lex = json_data.get("lex")
-    pos = json_data.get("morph", {}).get("pos")
-    gender = json_data.get("morph", {}).get("feats", {}).get("Gender")
-    dep_func = json_data.get("syntax", {}).get("dep_func")
-
-    # Create the dictionary with the desired keys
-    result = {
-        "word": word,
-        "lex": lex,
-        "pos": pos,
-        "Gender": gender,
-        "dep_func": dep_func
-    }
-
-    return result
-
-
-def process_json(input_json):
-    # Extract tokens from the input JSON
-    tokens = input_json[0].get("tokens", [])
-
-    # Convert each token to the desired dictionary format
-    result = [convert_json_to_dict(token) for token in tokens]
-
-    return result
+# def convert_json_to_dict(json_data):
+#     # Extract the necessary fields from the JSON data
+#     word = json_data.get("token")
+#     lex = json_data.get("lex")
+#     pos = json_data.get("morph", {}).get("pos")
+#     gender = json_data.get("morph", {}).get("feats", {}).get("Gender")
+#     dep_func = json_data.get("syntax", {}).get("dep_func")
+#
+#     # Create the dictionary with the desired keys
+#     result = {
+#         "word": word,
+#         "lex": lex,
+#         "pos": pos,
+#         "Gender": gender,
+#         "dep_func": dep_func
+#     }
+#
+#     return result
 
 
-def add_unique_words_lex_to_dict(sentence_list, word_dict):
-    punctuation = r"\"#$%&'()*+,-–./:;<=>?@[\]^_`{|}~"
-    for item in sentence_list:
-        lex_word = item.get("lex")
-        if not (len(lex_word) == 1 and lex_word in punctuation) and (lex_word and lex_word not in word_dict):
-            word_dict[lex_word] = len(word_dict)
-    return word_dict
-
-def add_unique_words_to_dict(sentence_list, word_dict):
-    punctuation = r"\"#$%&'()*+,-–./:;<=>?@[\]^_`{|}~"
-    for item in sentence_list:
-        lex_word = item.get("word")
-        if not (lex_word in punctuation) and (lex_word and lex_word not in word_dict):
-            word_dict[lex_word] = len(word_dict)
-    return word_dict
-
-def add_unique_pos_to_dict(sentence_list, pos_dict):
-    punctuation = r"\"#$%&'()*+,-–./:;<=>?@[\]^_`{|}~"
-    for item in sentence_list:
-        lex_word = item.get("word")
-        lex_pos = item.get("pos")
-        if not (lex_word in punctuation) and (lex_pos and lex_pos not in pos_dict):
-            pos_dict[lex_pos] = len(pos_dict)
-    return pos_dict
-
-def add_unique_dep_func_to_dict(sentence_list, dep_func_dict):
-    punctuation = r"\"#$%&'()*+,-–./:;<=>?@[\]^_`{|}~"
-    for item in sentence_list:
-        lex_word = item.get("word")
-        lex_dep_func = item.get("dep_func")
-        if not (lex_word in punctuation) and (lex_dep_func and lex_dep_func not in dep_func_dict):
-            dep_func_dict[lex_dep_func] = len(dep_func_dict)
-    return dep_func_dict
+# def process_json(input_json):
+#     # Extract tokens from the input JSON
+#     tokens = input_json[0].get("tokens", [])
+#
+#     # Convert each token to the desired dictionary format
+#     result = [convert_json_to_dict(token) for token in tokens]
+#
+#     return result
+#
+#
+# def add_unique_words_lex_to_dict(sentence_list, word_dict):
+#     punctuation = r"\"#$%&'()*+,-–./:;<=>?@[\]^_`{|}~"
+#     for item in sentence_list:
+#         lex_word = item.get("lex")
+#         if not (len(lex_word) == 1 and lex_word in punctuation) and (lex_word and lex_word not in word_dict):
+#             word_dict[lex_word] = len(word_dict)
+#     return word_dict
+#
+# def add_unique_words_to_dict(sentence_list, word_dict):
+#     punctuation = r"\"#$%&'()*+,-–./:;<=>?@[\]^_`{|}~"
+#     for item in sentence_list:
+#         lex_word = item.get("word")
+#         if not (lex_word in punctuation) and (lex_word and lex_word not in word_dict):
+#             word_dict[lex_word] = len(word_dict)
+#     return word_dict
+#
+# def add_unique_pos_to_dict(sentence_list, pos_dict):
+#     punctuation = r"\"#$%&'()*+,-–./:;<=>?@[\]^_`{|}~"
+#     for item in sentence_list:
+#         lex_word = item.get("word")
+#         lex_pos = item.get("pos")
+#         if not (lex_word in punctuation) and (lex_pos and lex_pos not in pos_dict):
+#             pos_dict[lex_pos] = len(pos_dict)
+#     return pos_dict
+#
+# def add_unique_dep_func_to_dict(sentence_list, dep_func_dict):
+#     punctuation = r"\"#$%&'()*+,-–./:;<=>?@[\]^_`{|}~"
+#     for item in sentence_list:
+#         lex_word = item.get("word")
+#         lex_dep_func = item.get("dep_func")
+#         if not (lex_word in punctuation) and (lex_dep_func and lex_dep_func not in dep_func_dict):
+#             dep_func_dict[lex_dep_func] = len(dep_func_dict)
+#     return dep_func_dict
 
 def get_lex(word,sentence):
     for item in sentence:
@@ -100,8 +108,6 @@ def find_string_in_dict_list(sentence, target):
     for word_dict in sentence:
         if target in word_dict.get("word"):
             return word_dict.get("lex")
-    #print(target)
-    #print(sentence)
     return "err"  # Return -1 if the target string is not found
 
 #  Finds and returns a dictionary from the list `sentence` based on a search for a substring in the `word` field
@@ -136,30 +142,26 @@ def find_pos_in_dict_list(sentence, target):
     for word_dict in sentence:
         if target in word_dict.get("word"):
             return word_dict.get("pos")
-    #print(target)
-    #print(sentence)
     return "err"  # Return -1 if the target string is not found
 
 def find_dep_in_dict_list(sentence, target):
     for word_dict in sentence:
         if target in word_dict.get("word"):
             return word_dict.get("dep_func")
-    #print(target)
-    #print(sentence)
     return "err"  # Return -1 if the target string is not found
 
 
-def add_smixut_to_uniqe_words(smixut_list, uniqe_words):
-    punctuation = r"\"#$%&'()*+,-–./:;<=>?@[\]^_`{|}~"
-    for smixut in smixut_list:
-        if '-' not in smixut or '–' not in smixut:
-            word1, word2 = smixut.split(' ', 1)
-            if not (len(word1) == 1 and word1 in punctuation) and (word1 and word1 not in uniqe_words):
-                uniqe_words[word1] = len(uniqe_words)
-            if not (len(word2) == 1 and word2 in punctuation) and (word2 and word2 not in uniqe_words):
-                uniqe_words[word2] = len(uniqe_words)
-
-    return uniqe_words
+# def add_smixut_to_uniqe_words(smixut_list, uniqe_words):
+#     punctuation = r"\"#$%&'()*+,-–./:;<=>?@[\]^_`{|}~"
+#     for smixut in smixut_list:
+#         if '-' not in smixut or '–' not in smixut:
+#             word1, word2 = smixut.split(' ', 1)
+#             if not (len(word1) == 1 and word1 in punctuation) and (word1 and word1 not in uniqe_words):
+#                 uniqe_words[word1] = len(uniqe_words)
+#             if not (len(word2) == 1 and word2 in punctuation) and (word2 and word2 not in uniqe_words):
+#                 uniqe_words[word2] = len(uniqe_words)
+#
+#     return uniqe_words
 
 
    # Returns the key associated with the given value in a dictionary.
@@ -256,21 +258,19 @@ def make_vector2(smixut_list, unique_lex_words,sentences):
 
 #vector that marks all the words in the sentence besides the smixut
 #assuming that the smixut is the word where "dep_func": "compound:smixut" and the previous one
-def make_vector3(unique_words, sentences):
+def make_vector3(unique_words, smixut_list, sentences):
     vectors_type3 = []
     punctuation = r"\"#$%&'()*+,-–./:;<=>?@[\]^_`{|}~"
-    for sentence in sentences:
-        prev_word = ""
+    for i, sentence in enumerate(sentences):
+        if i >= len(smixut_list):
+            break
         curr_vec = [0] * len(unique_words)
+        word1, word2 = smixut_list[i].split(' ', 1)
         for word_dict in sentence:
-            word = word_dict.get("word")
-            type = word_dict.get("dep_func")
-            if word not in punctuation:
-                if type != "compound:smixut":
-                    curr_vec[unique_words[word]] = 1
-                else:
-                    curr_vec[unique_words[prev_word]] = 0
-                prev_word = word
+            curr_word = word_dict.get("word")
+            if curr_word not in punctuation:
+                if not (curr_word == word1 or curr_word == word2):
+                    curr_vec[unique_words[curr_word]] = 1
         vectors_type3.append(curr_vec)
     return vectors_type3
 
@@ -1081,70 +1081,103 @@ def make_vector30(smixut_list, sentences):
 
     return dep_func_vectors
 
+# def make_parameters():
+#     unique_words_lex = {}
+#     unique_words = {}
+#     unique_genders = { "Masc", "Fem" }
+#     unique_pos = {}
+#     unique_dep_func = {}
+#     smixut_list = []
+#     with open('smixut_file.json', 'r', encoding='utf-8') as smixut_file:
+#         for smixut in smixut_file:
+#             smixut_list.append(smixut)
+#         # Read 'output.json' and process the data
+#     with open('output.json', 'r', encoding='utf-8') as file:
+#         for line in file:
+#             if line:
+#                 data = json.loads(line)
+#                 lst = process_json(data)
+#                 sentences.append(lst)
+#                 add_unique_words_to_dict(lst, unique_words)
+#                 add_unique_words_lex_to_dict(lst, unique_words_lex)
+#                 add_unique_pos_to_dict(lst, unique_pos)
+#                 add_unique_dep_func_to_dict(lst, unique_dep_func)
+#     add_smixut_to_uniqe_words(smixut_list, unique_words)
+#
+#     return sentences,smixut_list ,unique_words, unique_genders, unique_pos, unique_dep_func, unique_words_lex
+#
+
+
 # sentence = 'בשנת 1948 השלים אפרים קישון את לימודיו בפיסול מתכת ובתולדות האמנות והחל לפרסם מאמרים הומוריסטיים'
 # predictions = model.predict([sentence], tokenizer, output_style='json')
 # predictions_json = json.dumps(predictions, ensure_ascii=False)
 # with open('output.json', 'w', encoding='utf-8') as f:
 #     f.write(predictions_json)
-
-# read file
-file_path = 'Sentence_classification.xlsx'
-df = pd.read_excel(file_path)
-column_name = 'משפט'
-column_sentence = []
-column_smixut = []
-sentences = []
-if column_name in df.columns:
-    column_sentence = df[column_name].tolist()
-column_name1 = 'מבנה סמיכות'
-if column_name1 in df.columns:
-    column_smixut = df[column_name1].tolist()
-    unique_words_lex = {}
-    unique_words = {}
-    unique_genders = { "Masc", "Fem" }
-    unique_pos = {}
-    unique_dep_func = {}
-    # with open('output.json', 'w', encoding='utf-8') as f:
-    #     for sentence in column_sentence:
-    #         predictions = model.predict([sentence], tokenizer, output_style='json')
-    #         predictions_json = json.dumps(predictions, ensure_ascii=False)
-    #         f.write(predictions_json+'\n')
-    smixut_list = []
-    with open('smixut_file.json', 'w', encoding='utf-8') as smixut_file:
-        for smixut in column_smixut:
-            smixut_list.append(smixut)
-            smixut_json = json.dumps(smixut, ensure_ascii=False)
-            smixut_file.write(smixut_json + '\n')
-        # Read 'output.json' and process the data
-    with open('output.json', 'r', encoding='utf-8') as file:
-        for line in file:
-            if line:
-                data = json.loads(line)
-                lst = process_json(data)
-                sentences.append(lst)
-                add_unique_words_to_dict(lst, unique_words)
-                add_unique_words_lex_to_dict(lst, unique_words_lex)
-                add_unique_pos_to_dict(lst, unique_pos)
-                add_unique_dep_func_to_dict(lst, unique_dep_func)
-
+#
+# # read file
+# file_path = 'Sentence_classification.xlsx'
+# df = pd.read_excel(file_path)
+# column_name = 'משפט'
+# column_sentence = []
+# column_smixut = []
+# sentences = []
+# if column_name in df.columns:
+#     column_sentence = df[column_name].tolist()
+# column_name1 = 'מבנה סמיכות'
+# if column_name1 in df.columns:
+#     column_smixut = df[column_name1].tolist()
+#     unique_words_lex = {}
+#     unique_words = {}
+#     unique_genders = { "Masc", "Fem" }
+#     unique_pos = {}
+#     unique_dep_func = {}
+#     # with open('output.json', 'w', encoding='utf-8') as f:
+#     #     for sentence in column_sentence:
+#     #          predictions = model.predict([sentence], tokenizer, output_style='json')
+#     #          predictions_json = json.dumps(predictions, ensure_ascii=False)
+#     #          f.write(predictions_json+'\n')
+#     smixut_list = []
+#   #  with open('smixut_file.json', 'w', encoding='utf-8') as smixut_file:
+#       #  for smixut in column_smixut:
+#          #  smixut_list.append(smixut)
+#          #   smixut_json = json.dumps(smixut, ensure_ascii=False)
+#         #    smixut_file.write(smixut_json + '\n')
+#         # Read 'output.json' and process the data
+#     # with open('output.json', 'r', encoding='utf-8') as file:
+#     #     for line in file:
+#     #         if line:
+#     #             data = json.loads(line)
+#     #             lst = process_json(data)
+#     #             sentences.append(lst)
+#     #             add_unique_words_to_dict(lst, unique_words)
+#     #             add_unique_words_lex_to_dict(lst, unique_words_lex)
+#     #             add_unique_pos_to_dict(lst, unique_pos)
+#     #             add_unique_dep_func_to_dict(lst, unique_dep_func)
+#
+#
+#
+#     # add_smixut_to_uniqe_words(smixut_list, unique_words)
+#     lst = process_json(data)
+#     with open('output.txt', 'w', encoding='utf-8') as file1:
+#         print_to_file(sentences, file1)
 
     # with open('unique_words.txt', 'w', encoding='utf-8') as file:
     #     print_to_file(unique_words, file)
 
     # with open('unique_lex_words.txt', 'w', encoding='utf-8') as file:
     #     print_to_file(unique_words_lex, file)
-    add_smixut_to_uniqe_words(smixut_list, unique_words)
-    lst = process_json(data)
-    with open('output.txt', 'w', encoding='utf-8') as file1:
-        print_to_file(sentences, file1)
-    with open('vec_type_1.txt', 'w', encoding='utf-8') as filetype1:
-        vectors_type1 = make_vector1(smixut_list, unique_words, sentences)
-        for vector in vectors_type1:
-            print_to_file(vector, filetype1)
-    with open('vec_type_2.txt', 'w', encoding='utf-8') as filetype2:
-        vectors_type2 = make_vector2(smixut_list, unique_words_lex, sentences)
-        for vector in vectors_type2:
-            print_to_file(vector, filetype2)
+#     add_smixut_to_uniqe_words(smixut_list, unique_words)
+#     lst = process_json(data)
+#     with open('output.txt', 'w', encoding='utf-8') as file1:
+#         print_to_file(sentences, file1)
+#     with open('vec_type_1.txt', 'w', encoding='utf-8') as filetype1:
+#         vectors_type1 = make_vector1(smixut_list, unique_words, sentences)
+#         for vector in vectors_type1:
+#             print_to_file(vector, filetype1)
+#     with open('vec_type_2.txt', 'w', encoding='utf-8') as filetype2:
+#         vectors_type2 = make_vector2(smixut_list, unique_words_lex, sentences)
+#         for vector in vectors_type2:
+#             print_to_file(vector, filetype2)
 
 #vectors_type6 = make_vector6(smixut_list, unique_words, sentences)
 
@@ -1156,3 +1189,17 @@ print(vectors_type28)
 #print(make_vector7(smixut_list, unique_words, sentences))
 # else:
 #     print(f"Column '{column_name}' does not exist in the file.")
+
+# def call_to_vector1():
+#     sentences, smixut_list, unique_words, unique_genders, unique_pos, unique_dep_func, unique_words_lex = make_parameters()
+#     return make_vector1(smixut_list, unique_words, sentences)
+#
+#
+# def call_to_vector2():
+#     sentences, smixut_list, unique_words, unique_genders, unique_pos, unique_dep_func, unique_words_lex = make_parameters()
+#     return make_vector2(smixut_list, unique_words_lex, sentences)
+#
+#
+# def call_to_vector3():
+#     sentences, smixut_list, unique_words, unique_genders, unique_pos, unique_dep_func, unique_words_lex = make_parameters()
+#     return make_vector3(unique_words, smixut_list, sentences)
