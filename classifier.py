@@ -1,9 +1,9 @@
 import pandas as pd
-import random
 from vectors import vector
 from sklearn.model_selection import KFold
 from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier
+from sklearn.ensemble import GradientBoostingClassifier
 from sklearn.metrics import accuracy_score
 import numpy as np
 import warnings
@@ -19,16 +19,12 @@ def get_tag_list():
     return tag_list
 
 
-def perform_kfold_cv(X, y):
+def perform_kfold_cv(X, y, model):
     # Initialize KFold with 10 splits
     kf = KFold(n_splits=10, shuffle=True, random_state=42)
 
     # Suppress specific FutureWarning related to multi_class
     warnings.filterwarnings('ignore', category=FutureWarning, message=".*multi_class.*")
-    # Model initialization
-    # model = LogisticRegression(max_iter=200, multi_class='multinomial')
-    model = RandomForestClassifier(n_estimators=100, random_state=42)
-
     # To store accuracy scores
     accuracies = []
     # Assuming X is currently a list or other data structure
@@ -55,7 +51,7 @@ def perform_kfold_cv(X, y):
     return mean_accuracy
 
 
-def calculate_accuracy_for_all_vectors():
+def calculate_accuracy_for_all_vectors(model, file):
     vectors = vector()
     results = {}
     tag_list = get_tag_list()
@@ -63,10 +59,30 @@ def calculate_accuracy_for_all_vectors():
         function_name = f"make_vector{i}"
         make_vector_function = getattr(vectors, function_name)
         vectors_i = make_vector_function()
-        accuracy_i = perform_kfold_cv(vectors_i, tag_list)
+        accuracy_i = perform_kfold_cv(vectors_i, tag_list, model)
         results[function_name] = accuracy_i
         print("Vector type {} avg accuracy {}".format(i, accuracy_i))
+        file.write("Vector type {} avg accuracy {} \n".format(i, accuracy_i))
     # return results
 
+def run_on_different_nodels():
+    logistic_regression_params = {'max_iter': 200, 'multi_class': 'multinomial'}
+    random_forest_params = {'n_estimators': 100, 'max_depth': 10, 'random_state': 42}
+    gradient_boosting_params = {'n_estimators': 50, 'learning_rate': 0.2, 'max_depth': 2, 'random_state': 42}
 
-calculate_accuracy_for_all_vectors()
+    # Instantiate models with parameters
+    models = [
+        LogisticRegression(**logistic_regression_params),
+        RandomForestClassifier(**random_forest_params),
+        GradientBoostingClassifier(**gradient_boosting_params),
+    ]
+    with open('results.txt', 'w', encoding='utf-8') as file:
+        for model in models:
+            file.write("model {} results \n".format(model.__class__.__name__))
+            calculate_accuracy_for_all_vectors(model, file)
+
+
+# models = [LogisticRegression(), RandomForestClassifier(), XGBClassifier()]
+# calculate_accuracy_for_all_vectors(models)
+# calculate_accuracy_for_all_vectors()
+run_on_different_nodels()
