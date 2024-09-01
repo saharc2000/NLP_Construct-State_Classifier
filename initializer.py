@@ -87,6 +87,13 @@ class DataStore:
 
         return uniqe_words
 
+    def print_to_file(self,token_info, file):
+        if token_info:
+            file.write(json.dumps(token_info, ensure_ascii=False, indent=4))
+        else:
+            print(f"Token not found.")
+
+
     def make_parameters(self):
         unique_words_lex = {}
         unique_words = {}
@@ -111,6 +118,14 @@ class DataStore:
                     # self.add_unique_pos_to_dict(lst, unique_pos)
                     # self.add_unique_dep_func_to_dict(lst, unique_dep_func)
         self.add_smixut_to_uniqe_words(smixut_list, unique_words)
+        # with open('output.txt', 'w', encoding='utf-8') as file1:
+        #     self.print_to_file(sentences, file1)
+        #
+        # with open('unique_words.txt', 'w', encoding='utf-8') as file:
+        #     self.print_to_file(unique_words, file)
+        #
+        # with open('unique_words_lex.txt', 'w', encoding='utf-8') as file:
+        #     self.print_to_file(unique_words_lex, file)
 
         return sentences,smixut_list ,unique_words, unique_genders, unique_pos, unique_dep_func, unique_words_lex
 
@@ -165,7 +180,7 @@ class DataStore:
         }
         return unique_pos
 
-    def analyze_xl_file(self):
+    def analyze_excel_file(self):
         tokenizer = AutoTokenizer.from_pretrained('dicta-il/dictabert-tiny-joint')
         model = AutoModel.from_pretrained('dicta-il/dictabert-tiny-joint', trust_remote_code=True)
         model.eval()
@@ -174,37 +189,16 @@ class DataStore:
         column_name = 'משפט'
         column_sentence = []
         column_smixut = []
-        sentences = []
         if column_name in df.columns:
             column_sentence = df[column_name].tolist()
         column_name1 = 'מבנה סמיכות'
         if column_name1 in df.columns:
-            column_smixut = df[column_name1].tolist()
-            unique_words_lex = {}
-            unique_words = {}
-            unique_genders = {"Masc", "Fem"}
-            unique_pos = {}
-            unique_dep_func = {}
             with open('output.json', 'w', encoding='utf-8') as f:
                 for sentence in column_sentence:
                      predictions = model.predict([sentence], tokenizer, output_style='json')
                      predictions_json = json.dumps(predictions, ensure_ascii=False)
                      f.write(predictions_json+'\n')
-            smixut_list = []
             with open('smixut_file.json', 'w', encoding='utf-8') as smixut_file:
                 for smixut in column_smixut:
-                    smixut_list.append(smixut)
                     smixut_json = json.dumps(smixut, ensure_ascii=False)
                     smixut_file.write(smixut_json + '\n')
-            # Read 'output.json' and process the data
-
-            # add_smixut_to_uniqe_words(smixut_list, unique_words)
-            # lst = process_json(data)
-            # with open('output.txt', 'w', encoding='utf-8') as file1:
-            #     print_to_file(sentences, file1)
-
-            # with open('self.unique_words.txt', 'w', encoding='utf-8') as file:
-            #     print_to_file(self.unique_words, file)
-
-            # with open('self.unique_words_lex.txt', 'w', encoding='utf-8') as file:
-            #     print_to_file(self.unique_words_lex, file)

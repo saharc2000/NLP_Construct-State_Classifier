@@ -24,13 +24,6 @@ class vector:
                     return token_info
         return None
 
-    def print_to_file(self,token_info, file):
-        if token_info:
-            # with open('output.txt', 'w', encoding='utf-8') as file:
-            file.write(json.dumps(token_info, ensure_ascii=False, indent=4))
-        else:
-            print(f"Token not found.")
-
     def get_lex(self,word,sentence):
         for item in sentence:
             if item.get("word") == word:
@@ -656,47 +649,9 @@ class vector:
 
         return combined_vectors
 
-    #vector that uses the pos tags and lex of the words after and befroe smixut
-    def make_vector22(self):
-        # Create a list to store the resulting vectors
-        combined_vectors = []
-
-        for i, smixut in enumerate(self.smixut_list):
-            if i >= len(self.sentences):
-                break
-
-            word1, word2 = smixut.split(' ', 1)
-
-            # Initialize the vector with zeros
-            vector = [0] * (len(self.unique_pos) + len(self.unique_words_lex))
-
-            # Process the word before the smixut
-            word_before = self.find_dict_in_shift_from_smixut(self.sentences[i], -1, word1)
-            if word_before != "err":
-                pos_before = word_before.get("pos")
-                lex_before = word_before.get("lex")
-                if pos_before in self.unique_pos:
-                    vector[self.unique_pos[pos_before]] = 1
-                if lex_before in self.unique_words_lex:
-                    vector[len(self.unique_pos) + self.unique_words_lex[lex_before]] = 1
-
-            # Process the word after the smixut
-            word_after = self.find_dict_in_shift_from_smixut(self.sentences[i], 1, word2)
-            if word_after != "err":
-                pos_after = word_after.get("pos")
-                lex_after = word_after.get("lex")
-                if pos_after in self.unique_pos:
-                    vector[self.unique_pos[pos_after]] = 1
-                if lex_after in self.unique_words_lex:
-                    vector[len(self.unique_pos) + self.unique_words_lex[lex_after]] = 1
-
-            # Append the vector to the list of vectors
-            combined_vectors.append(vector)
-
-        return combined_vectors
 
     #vector that uses the pos of the two words before smixut
-    def make_vector23(self):
+    def make_vector22(self):
         # Create a list to store the resulting vectors
         vectors_pos_tags = []
 
@@ -728,7 +683,7 @@ class vector:
         return vectors_pos_tags
 
     #vector that uses the pos tags and lex of the two words before smixut
-    def make_vector24(self):
+    def make_vector23(self):
         # Create a list to store the resulting vectors
         combined_vectors = []
         for i, smixut in enumerate(self.smixut_list):
@@ -765,7 +720,7 @@ class vector:
         return combined_vectors
 
     #vector that uses the dep funcs and lex of the two words one before one after smixut
-    def make_vector25(self):
+    def make_vector24(self):
         # Create a list to store the resulting vectors
         dep_lex_vectors = []
 
@@ -804,7 +759,7 @@ class vector:
         return dep_lex_vectors
 
     #vector that uses the dep funcs and lex of the two words before smixut
-    def make_vector26(self):
+    def make_vector25(self):
         # Create a list to store the resulting vectors
         dep_lex_vectors = []
 
@@ -843,7 +798,7 @@ class vector:
         return dep_lex_vectors
 
     #vector that uses the dep funcs of word after and before of smixut
-    def make_vector27(self):
+    def make_vector26(self):
         # Create a list to store the resulting vectors
         dep_func_vectors = []
 
@@ -876,7 +831,7 @@ class vector:
         return dep_func_vectors
 
     #vector that uses the dep funcs and unique words of the two words one before one after smixut
-    def make_vector28(self):
+    def make_vector27(self):
         # Create a list to store the resulting vectors
         dep_func_word_vectors = []
 
@@ -915,7 +870,7 @@ class vector:
         return dep_func_word_vectors
 
     #vector that uses the dep funcs and unique words of the two words before smixut
-    def make_vector29(self):
+    def make_vector28(self):
         # Create a list to store the resulting vectors
         dep_func_word_vectors = []
 
@@ -954,7 +909,7 @@ class vector:
         return dep_func_word_vectors
 
     #vector that uses the dep funcs of two words before smixut
-    def make_vector30(self):
+    def make_vector29(self):
         # Create a list to store the resulting vectors
         dep_func_vectors = []
         for i, smixut in enumerate(self.smixut_list):
@@ -984,7 +939,3 @@ class vector:
             dep_func_vectors.append(vector)
 
         return dep_func_vectors
-
-
-
-    
