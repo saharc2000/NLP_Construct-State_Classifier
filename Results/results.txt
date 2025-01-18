@@ -1,14 +1,14 @@
 model LogisticRegression results 
-Vector type 1 avg accuracy 0.40035353535353535 
+Vector type 1 avg accuracy 0.40035353535353535
 Vector type 2 avg accuracy 0.4394343434343434
-Vector type 3 avg accuracy 0.2524854574299312 
-Vector type 4 avg accuracy 0.20851401374933895 
-Vector type 5 avg accuracy 0.21351136964569012 
-Vector type 6 avg accuracy 0.2656002115282919 
-Vector type 7 avg accuracy 0.2625330512956108 
-Vector type 8 avg accuracy 0.2639344262295082 
-Vector type 9 avg accuracy 0.35661025912215755 
-Vector type 10 avg accuracy 0.26887890005288206 
+Vector type 3 avg accuracy 0.2524854574299312
+Vector type 4 avg accuracy 0.20851401374933895
+Vector type 5 avg accuracy 0.21351136964569012
+Vector type 6 avg accuracy 0.2656002115282919
+Vector type 7 avg accuracy 0.2625330512956108
+Vector type 8 avg accuracy 0.2639344262295082
+Vector type 9 avg accuracy 0.35661025912215755
+Vector type 10 avg accuracy 0.26887890005288206
 Vector type 11 avg accuracy 0.3713643574828133
 Vector type 12 avg accuracy 0.2279481755684823
 Vector type 13 avg accuracy 0.20362242199894237

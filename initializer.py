@@ -1,8 +1,5 @@
 import json
 import pandas as pd
-import json
-import pandas as pd
-import string
 from transformers import AutoModel, AutoTokenizer
 
 
@@ -102,7 +99,7 @@ class DataStore:
         unique_dep_func = self.get_unique_dep_func()
         smixut_list = []
         sentences = []
-        with open('smixut_file.json', 'r', encoding='utf-8') as smixut_file:
+        with open('Data/smixut_file.json', 'r', encoding='utf-8') as smixut_file:
             for smixut in smixut_file:
                 smixut = smixut.replace('\n', '').replace('"', '').replace("'", '')
                 smixut_list.append(smixut)
@@ -184,7 +181,7 @@ class DataStore:
         tokenizer = AutoTokenizer.from_pretrained('dicta-il/dictabert-tiny-joint')
         model = AutoModel.from_pretrained('dicta-il/dictabert-tiny-joint', trust_remote_code=True)
         model.eval()
-        file_path = 'Sentence_classification.xlsx'
+        file_path = 'Data/Sentence_classification.xlsx'
         df = pd.read_excel(file_path)
         column_name = 'משפט'
         column_sentence = []
@@ -198,7 +195,7 @@ class DataStore:
                      predictions = model.predict([sentence], tokenizer, output_style='json')
                      predictions_json = json.dumps(predictions, ensure_ascii=False)
                      f.write(predictions_json+'\n')
-            with open('smixut_file.json', 'w', encoding='utf-8') as smixut_file:
+            with open('Data/smixut_file.json', 'w', encoding='utf-8') as smixut_file:
                 for smixut in column_smixut:
                     smixut_json = json.dumps(smixut, ensure_ascii=False)
                     smixut_file.write(smixut_json + '\n')

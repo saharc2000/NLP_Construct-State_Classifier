@@ -1,16 +1,16 @@
 import pandas as pd
-from vectors import vector
-from initializer import DataStore
+from Vectors.vectors import vector
 from sklearn.model_selection import KFold
 from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score
 import numpy as np
 import warnings
+from initializer import DataStore
 
 
 def get_tag_list():
-    file_path = 'Sentence_classification.xlsx'
+    file_path = 'Data/Sentence_classification.xlsx'
     df = pd.read_excel(file_path)
     tag_list = []
     column_name = 'תיוג'
@@ -86,7 +86,7 @@ def run_on_different_nodels():
     best_model = None
     best_vector_num = 0
 
-    with open('results.txt', 'w', encoding='utf-8') as file:
+    with open('Results/results.txt', 'w', encoding='utf-8') as file:
         for model in models:
             file.write("model {} results \n".format(model.__class__.__name__))
             accuracy, best_vector = calculate_accuracy_for_all_vectors(model, file)
@@ -106,7 +106,7 @@ def print_best_vector(model, vector_num):
     make_vector_function = getattr(vectors, function_name)
     vectors_i = make_vector_function()
     tag_list = get_tag_list()
-    with open('results_best_vector_classification.txt', 'w', encoding='utf-8') as file:
+    with open('Results/results_best_vector_classification.txt', 'w', encoding='utf-8') as file:
         perform_kfold_cv(vectors_i, tag_list, model,print_results=True, file=file)
 
 
