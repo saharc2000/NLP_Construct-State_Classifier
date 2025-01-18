@@ -40,11 +40,7 @@ The study focused on five linguistic features:
 
 ## Results & Findings
 ### Vector Description
-The project evaluates the following vectors for each Smichut construction:
-- **Vector 1**: Binary vector based on the unique words in each sentence, marking positions corresponding to Smichut words.
-- **Vector 2**: Binary vector based on the unique lemma (dictionary form) of each word.
-- **Vector 3**: Binary vector excluding the words in the Smichut construction itself, focusing on surrounding words.
-- **Vector 4**: A more complex vector considering combinations of various features.
+The project evaluates a set of 30 feature vectors for each Smichut construction. These vectors, which combine various linguistic properties, were used to train the classifier. Each vector type was evaluated based on the classifier’s performance during the testing phase.
 
 ### Vector Scores
 The vectors were evaluated based on the success of the classifier during the testing phase. The results of these evaluations were saved and analyzed to determine the optimal vector configuration.
